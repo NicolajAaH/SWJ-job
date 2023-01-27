@@ -6,6 +6,8 @@ import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @RequiredArgsConstructor
 @Component
 public class DatabaseServiceImpl implements DatabaseService {
@@ -25,6 +27,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public Job updateJob(long id, Job job) {
+        job.setUpdatedAt(new Date());
         return jobRepository.save(job);
     }
 
