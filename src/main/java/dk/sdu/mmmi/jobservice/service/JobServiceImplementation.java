@@ -1,8 +1,11 @@
 package dk.sdu.mmmi.jobservice.service;
 
+import dk.sdu.mmmi.jobservice.service.interfaces.CompanyService;
 import dk.sdu.mmmi.jobservice.service.interfaces.DatabaseService;
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
+import dk.sdu.mmmi.jobservice.service.model.Company;
 import dk.sdu.mmmi.jobservice.service.model.Job;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,19 @@ public class JobServiceImplementation implements JobService {
 
     private final DatabaseService databaseService;
 
+    private final CompanyService companyService;
+
     @Override
     public Job createJob(Job job) {
         log.info("--> createJob: {}", job);
         job.setCreatedAt(new Date());
+        Company company = companyService.findByCompanyName(job.getCompany().getName());
+
+        if (company == null)
+            company = companyService.create(job.getCompany());
+
+        job.setCompany(company);
+
         return databaseService.createJob(job);
     }
 

@@ -47,4 +47,10 @@ public class CompanyServiceImplementation implements CompanyService {
         log.info("--> delete: {}", id);
         databaseService.deleteCompany(id);
     }
+
+    @Override
+    public Company findByCompanyName(String name) {
+        log.info("--> findByCompanyName: {}", name);
+        return databaseService.findCompanyByName(name);
+    }
 }

@@ -41,4 +41,6 @@ public interface DatabaseService {
     User updateUser(long id, User user);
 
     void deleteUser(long id);
+
+    Company findCompanyByName(String name);
 }

@@ -113,4 +113,9 @@ public class DatabaseServiceImpl implements DatabaseService {
     public void deleteUser(long id) {
         userRepository.deleteById(id);
     }
+
+    @Override
+    public Company findCompanyByName(String name) {
+        return companyRepository.name(name);
+    }
 }

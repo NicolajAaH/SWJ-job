@@ -14,4 +14,6 @@ public interface CompanyService {
     Company update(Long id, Company company);
 
     void delete(Long id);
+
+    Company findByCompanyName(String name);
 }

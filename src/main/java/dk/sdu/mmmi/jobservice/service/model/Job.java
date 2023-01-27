@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Date;
 import java.util.Set;
@@ -45,8 +46,10 @@ public class Job {
 
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @Lazy
     private Company company;
 
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<Application> applications;
 }
