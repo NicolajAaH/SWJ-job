@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "jobs")
@@ -42,6 +43,10 @@ public class Job {
     @Column(name = "expires_at", columnDefinition = "timestamp default now()+INTERVAL '30 days'", insertable = false, updatable = false, nullable = false)
     private Date expiresAt;
 
-    @Column(name = "company", nullable = false)
-    private String company;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Application> applications;
 }
