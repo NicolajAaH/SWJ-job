@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -17,6 +19,7 @@ public class JobServiceImplementation implements JobService {
     @Override
     public Job createJob(Job job) {
         log.info("--> createJob: {}", job);
+        job.setCreatedAt(new Date());
         return databaseService.createJob(job);
     }
 
@@ -29,6 +32,7 @@ public class JobServiceImplementation implements JobService {
     @Override
     public Job updateJob(long id, Job job) {
         log.info("--> updateJob: {}", job);
+        job.setUpdatedAt(new Date());
         return databaseService.updateJob(id, job);
     }
 

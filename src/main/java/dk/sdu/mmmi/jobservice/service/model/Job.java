@@ -33,13 +33,13 @@ public class Job {
     @Column(name = "salary", columnDefinition = "numeric(10,2)")
     private Double salary;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date updatedAt;
 
-    @Column(name = "expires_at", nullable = false)
+    @Column(name = "expires_at", columnDefinition = "timestamp default now()+INTERVAL '30 days'", insertable = false, updatable = false, nullable = false)
     private Date expiresAt;
 
     @Column(name = "company", nullable = false)
