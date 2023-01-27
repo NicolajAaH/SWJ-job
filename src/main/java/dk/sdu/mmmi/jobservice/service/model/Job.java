@@ -30,7 +30,7 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private JobType jobType;
 
-    @Column(name = "salary")
+    @Column(name = "salary", columnDefinition = "numeric(10,2)")
     private Double salary;
 
     @Column(name = "created_at", nullable = false)
