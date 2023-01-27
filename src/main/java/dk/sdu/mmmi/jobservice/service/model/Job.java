@@ -27,7 +27,8 @@ public class Job {
     private String description;
 
     @Column(name = "job_type", nullable = false)
-    private String jobType;
+    @Enumerated(EnumType.STRING)
+    private JobType jobType;
 
     @Column(name = "salary")
     private Double salary;

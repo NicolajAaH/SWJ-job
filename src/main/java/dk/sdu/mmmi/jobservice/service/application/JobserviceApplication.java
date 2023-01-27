@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-
 @ComponentScan(basePackages="dk.sdu.mmmi.jobservice")
 @EntityScan("dk.sdu.mmmi.jobservice.service.model")
 @EnableJpaRepositories("dk.sdu.mmmi.jobservice.outbound.repository")
