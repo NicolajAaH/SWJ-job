@@ -52,7 +52,6 @@ class JobControllerTest {
         assertThat(job.getLocation()).isEqualTo("Test City");
         assertThat(job.getSalary()).isEqualTo(100000.00);
         assertThat(job.getJobType()).isEqualTo(JobType.BACKEND);
-        assertThat(job.getCompany()).isEqualTo("Mock Company");
         assertThat(job.getCreatedAt()).isNotNull();
         assertThat(job.getUpdatedAt()).isNotNull();
         assertThat(job.getExpiresAt()).isNotNull();
@@ -83,7 +82,6 @@ class JobControllerTest {
         assertThat(job.getLocation()).isEqualTo("Test City");
         assertThat(job.getSalary()).isEqualTo(100000.00);
         assertThat(job.getJobType()).isEqualTo(JobType.BACKEND);
-        assertThat(job.getCompany()).isEqualTo("Mock Company");
         assertThat(job.getCreatedAt()).isNotNull();
         assertThat(job.getUpdatedAt()).isNotNull();
         assertThat(job.getExpiresAt()).isNotNull();
@@ -96,7 +94,7 @@ class JobControllerTest {
     @Test
     void updateJob() {
         Job mockJob = TestObjects.createMockJob();
-        mockJob.setCompany("New Company");
+        mockJob.setJobType(JobType.ARCHITECT);
         when(jobService.updateJob(anyLong(), any(Job.class))).thenReturn(mockJob);
 
         // Call the updateJob method
@@ -110,8 +108,7 @@ class JobControllerTest {
         assertThat(job.getDescription()).isEqualTo("This is a test job");
         assertThat(job.getLocation()).isEqualTo("Test City");
         assertThat(job.getSalary()).isEqualTo(100000.00);
-        assertThat(job.getJobType()).isEqualTo(JobType.BACKEND);
-        assertThat(job.getCompany()).isEqualTo("New Company");
+        assertThat(job.getJobType()).isEqualTo(JobType.ARCHITECT);
         assertThat(job.getCreatedAt()).isNotNull();
         assertThat(job.getUpdatedAt()).isNotNull();
         assertThat(job.getExpiresAt()).isNotNull();
