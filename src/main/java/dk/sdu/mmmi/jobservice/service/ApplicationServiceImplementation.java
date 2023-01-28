@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -35,5 +38,11 @@ public class ApplicationServiceImplementation implements ApplicationService {
     public void deleteApplication(long id) {
         log.info("--> deleteApplication: {}", id);
         databaseService.deleteApplication(id);
+    }
+
+    @Override
+    public List<Application> getJobApplications(long id) {
+        log.info("--> getJobApplications: {}", id);
+        return new ArrayList<>(databaseService.getJob(id).getApplications());
     }
 }

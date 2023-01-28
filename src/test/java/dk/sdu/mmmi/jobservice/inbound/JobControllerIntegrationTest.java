@@ -38,7 +38,7 @@ public class JobControllerIntegrationTest {
 
     @Test
     public void testGetJob() throws Exception {
-        long id = 2;
+        long id = 1;
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk());

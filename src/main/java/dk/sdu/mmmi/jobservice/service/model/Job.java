@@ -1,9 +1,11 @@
 package dk.sdu.mmmi.jobservice.service.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 import java.util.Set;
@@ -31,22 +33,25 @@ public class Job {
     @Enumerated(EnumType.STRING)
     private JobType jobType;
 
+    @Column(name = "company_id", nullable = false)
+    private Long companyId;
+
     @Column(name = "salary", columnDefinition = "numeric(10,2)")
     private Double salary;
 
-    @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
+    @Column(name = "created_at")
+    @ColumnDefault("now()")
     private Date createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
+    @Column(name = "updated_at")
+    @ColumnDefault("now()")
     private Date updatedAt;
 
-    @Column(name = "expires_at", columnDefinition = "timestamp default now()+INTERVAL '30 days'", insertable = false, updatable = false, nullable = false)
+    @Column(name = "expires_at", nullable = false)
     private Date expiresAt;
 
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "job", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @JsonManagedReference
     private Set<Application> applications;
 }
