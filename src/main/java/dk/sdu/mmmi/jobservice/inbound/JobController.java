@@ -1,6 +1,7 @@
 package dk.sdu.mmmi.jobservice.inbound;
 
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
+import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,13 @@ public class JobController {
         return new ResponseEntity<>(createdJob, HttpStatus.CREATED);
     }
 
+    @PostMapping("/{id}/apply")
+    public ResponseEntity<Void> applyForJob(@PathVariable("id") long id, @RequestBody Application application) {
+        log.info("--> applyForJob: {}, id: {}", application, id);
+        jobService.applyForJob(id, application);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJob(@PathVariable("id") long id) {
         log.info("--> getJob: {}", id);
@@ -33,6 +41,16 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(job, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/applications")
+    public ResponseEntity<List<Application>> getJobApplications(@PathVariable("id") long id) {
+        log.info("--> getJob: {}", id);
+        List<Application> applications = jobService.getJobApplications(id);
+        if (applications == null || applications.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(applications, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

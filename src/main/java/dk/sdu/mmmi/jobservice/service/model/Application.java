@@ -1,9 +1,11 @@
 package dk.sdu.mmmi.jobservice.service.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 
@@ -18,17 +20,24 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
-    @ManyToOne
-    @JoinColumn(name = "job_id", insertable = false, updatable = false)
-    private Job job;
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ApplicationStatus status;
 
-    @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
+    @Column(name = "created_at")
+    @ColumnDefault("now()")
     private Date createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
+    @Column(name = "updated_at")
+    @ColumnDefault("now()")
     private Date updatedAt;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "job_id", nullable = false)
+    @JsonBackReference
+    private Job job;
+
 }

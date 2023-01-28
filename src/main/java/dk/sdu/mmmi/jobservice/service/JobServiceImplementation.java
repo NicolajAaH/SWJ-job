@@ -1,16 +1,14 @@
 package dk.sdu.mmmi.jobservice.service;
 
-import dk.sdu.mmmi.jobservice.service.interfaces.CompanyService;
-import dk.sdu.mmmi.jobservice.service.interfaces.DatabaseService;
-import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
-import dk.sdu.mmmi.jobservice.service.model.Company;
+import dk.sdu.mmmi.jobservice.service.interfaces.*;
+import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.Job;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,20 +16,12 @@ import java.util.Date;
 public class JobServiceImplementation implements JobService {
 
     private final DatabaseService databaseService;
-
-    private final CompanyService companyService;
+    private final ApplicationService applicationService;
 
     @Override
     public Job createJob(Job job) {
         log.info("--> createJob: {}", job);
         job.setCreatedAt(new Date());
-        Company company = companyService.findByCompanyName(job.getCompany().getName());
-
-        if (company == null)
-            company = companyService.create(job.getCompany());
-
-        job.setCompany(company);
-
         return databaseService.createJob(job);
     }
 
@@ -52,5 +42,17 @@ public class JobServiceImplementation implements JobService {
     public void deleteJob(long id) {
         log.info("--> deleteJob: {}", id);
         databaseService.deleteJob(id);
+    }
+
+    @Override
+    public void applyForJob(long id, Application application) {
+        log.info("--> applyForJob: {}", application);
+        applicationService.createApplication(application);
+    }
+
+    @Override
+    public List<Application> getJobApplications(long id) {
+        log.info("--> getJobApplications: {}", id);
+        return applicationService.getJobApplications(id);
     }
 }
