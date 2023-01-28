@@ -27,12 +27,10 @@ public class Application {
     @Enumerated(EnumType.STRING)
     private ApplicationStatus status;
 
-    @Column(name = "created_at")
-    @ColumnDefault("now()")
+    @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date createdAt;
 
-    @Column(name = "updated_at")
-    @ColumnDefault("now()")
+    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date updatedAt;
 
     @ManyToOne(optional = false)

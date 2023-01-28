@@ -39,12 +39,10 @@ public class Job {
     @Column(name = "salary", columnDefinition = "numeric(10,2)")
     private Double salary;
 
-    @Column(name = "created_at")
-    @ColumnDefault("now()")
+    @Column(name = "created_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date createdAt;
 
-    @Column(name = "updated_at")
-    @ColumnDefault("now()")
+    @Column(name = "updated_at", columnDefinition = "timestamp default now()", insertable = false, updatable = false, nullable = false)
     private Date updatedAt;
 
     @Column(name = "expires_at", nullable = false)

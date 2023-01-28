@@ -53,6 +53,16 @@ public class JobController {
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
 
+    @GetMapping("/companies/{id}")
+    public ResponseEntity<List<Job>> getJobsByCompanyId(@PathVariable("id") long id) {
+        log.info("--> getJobsByCompanyId: {}", id);
+        List<Job> jobs = jobService.getJobsByCompanyId(id);
+        if (jobs == null || jobs.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Job> updateJob(@PathVariable("id") long id, @RequestBody Job job) {
         log.info("--> updateJob: {}", job);

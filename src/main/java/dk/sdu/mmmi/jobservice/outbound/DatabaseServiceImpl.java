@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -59,5 +60,10 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public void deleteApplication(long id) {
         applicationRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Job> getJobsByCompanyId(long id) {
+        return jobRepository.findAllByCompanyId(id);
     }
 }
