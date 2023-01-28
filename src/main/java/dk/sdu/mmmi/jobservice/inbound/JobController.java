@@ -33,6 +33,16 @@ public class JobController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Job>> getJobs() {
+        log.info("--> getJobs");
+        List<Job> jobs = jobService.getJobs();
+        if (jobs == null || jobs.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Job> getJob(@PathVariable("id") long id) {
         log.info("--> getJob: {}", id);

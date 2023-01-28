@@ -23,4 +23,7 @@ public interface DatabaseService {
     void deleteApplication(long id);
 
     List<Job> getJobsByCompanyId(long id);
+
+    List<Job> getJobs();
+
 }

@@ -19,4 +19,7 @@ public interface JobService {
     List<Application> getJobApplications(long id);
 
     List<Job> getJobsByCompanyId(long id);
+
+    List<Job> getJobs();
+
 }

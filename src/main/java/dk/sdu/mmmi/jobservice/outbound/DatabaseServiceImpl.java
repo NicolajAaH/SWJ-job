@@ -66,4 +66,9 @@ public class DatabaseServiceImpl implements DatabaseService {
     public List<Job> getJobsByCompanyId(long id) {
         return jobRepository.findAllByCompanyId(id);
     }
+
+    @Override
+    public List<Job> getJobs() {
+        return jobRepository.findAll();
+    }
 }

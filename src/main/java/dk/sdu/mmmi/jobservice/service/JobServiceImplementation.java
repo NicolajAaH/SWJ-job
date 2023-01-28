@@ -61,4 +61,10 @@ public class JobServiceImplementation implements JobService {
         log.info("--> getJobsByCompanyId: {}", id);
         return databaseService.getJobsByCompanyId(id);
     }
+
+    @Override
+    public List<Job> getJobs() {
+        log.info("--> getJobs");
+        return databaseService.getJobs();
+    }
 }
