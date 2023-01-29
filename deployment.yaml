@@ -62,10 +62,11 @@ spec:
               value: postgres
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: database-job-service
 spec:
+  serviceName: database-job-service
   replicas: 1
   selector:
     matchLabels:
@@ -75,12 +76,15 @@ spec:
       labels:
         app: database-job-service
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
         - name: postgres
           image: postgres:latest
           volumeMounts:
             - name: postgresql-initdb
               mountPath: /docker-entrypoint-initdb.d
+            - name: postgres-persistent-storage
+              mountPath: /data
           env:
             - name: POSTGRES_USER
               value: postgres
@@ -88,12 +92,24 @@ spec:
               value: password
             - name: POSTGRES_DB
               value: postgres
+            - name: PGDATA
+              value: /data/pgdata
           ports:
             - containerPort: 5432
       volumes:
         - name: postgresql-initdb
           configMap:
             name: postgresql-initdb-config
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-persistent-storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "standard"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 500Mi
 ---
 apiVersion: v1
 kind: Service
