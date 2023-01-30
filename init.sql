@@ -17,7 +17,7 @@ CREATE TABLE applications
     id          SERIAL PRIMARY KEY,
     status      VARCHAR(10)    NOT NULL,
     job_id      INTEGER        NOT NULL REFERENCES jobs (id),
-    user_id     INTEGER        NOT NULL,
+    user_id     VARCHAR(50)    NOT NULL,
     created_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
     UNIQUE (job_id, user_id)

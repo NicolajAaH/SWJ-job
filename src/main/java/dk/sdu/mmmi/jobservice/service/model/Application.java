@@ -21,7 +21,7 @@ public class Application {
     private Long id;
 
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private String userId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

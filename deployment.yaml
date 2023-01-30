@@ -24,7 +24,7 @@ data:
         id          SERIAL PRIMARY KEY,
         status      VARCHAR(10)    NOT NULL,
         job_id      INTEGER        NOT NULL REFERENCES jobs (id),
-        user_id     INTEGER        NOT NULL,
+        user_id     VARCHAR(50)    NOT NULL,
         created_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
         updated_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
         UNIQUE (job_id, user_id)
@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
         - name: job-service
-          image: nicolajh/job-service
+          image: nicolajh/swj-job
           ports:
             - containerPort: 8080
           env:
@@ -62,10 +62,11 @@ spec:
               value: postgres
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: database-job-service
 spec:
+  serviceName: database-job-service
   replicas: 1
   selector:
     matchLabels:
@@ -75,12 +76,15 @@ spec:
       labels:
         app: database-job-service
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
         - name: postgres
           image: postgres:latest
           volumeMounts:
             - name: postgresql-initdb
               mountPath: /docker-entrypoint-initdb.d
+            - name: postgres-persistent-storage
+              mountPath: /data
           env:
             - name: POSTGRES_USER
               value: postgres
@@ -88,12 +92,24 @@ spec:
               value: password
             - name: POSTGRES_DB
               value: postgres
+            - name: PGDATA
+              value: /data/pgdata
           ports:
             - containerPort: 5432
       volumes:
         - name: postgresql-initdb
           configMap:
             name: postgresql-initdb-config
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-persistent-storage
+      annotations:
+        volume.beta.kubernetes.io/storage-class: "standard"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 500Mi
 ---
 apiVersion: v1
 kind: Service
