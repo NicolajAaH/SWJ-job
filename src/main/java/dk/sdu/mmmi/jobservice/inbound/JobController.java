@@ -2,6 +2,7 @@ package dk.sdu.mmmi.jobservice.inbound;
 
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
+import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -19,6 +21,8 @@ public class JobController {
 
     private final JobService jobService;
 
+    private final DTOMapper dtoMapper = DTOMapper.INSTANCE;
+
     @PostMapping
     public ResponseEntity<Job> createJob(@RequestBody Job job) {
         log.info("--> createJob: {}", job);
@@ -27,8 +31,10 @@ public class JobController {
     }
 
     @PostMapping("/{id}/apply")
-    public ResponseEntity<Void> applyForJob(@PathVariable("id") long id, @RequestBody Application application) {
-        log.info("--> applyForJob: {}, id: {}", application, id);
+    public ResponseEntity<Void> applyForJob(@PathVariable("id") long id, @RequestBody ApplicationDTO applicationDTO) {
+        log.info("--> applyForJob: {}, id: {}", applicationDTO, id);
+        Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
+        application.setJob(jobService.getJob(applicationDTO.getJobId()));
         jobService.applyForJob(id, application);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -68,7 +74,7 @@ public class JobController {
         log.info("--> getJobsByCompanyId: {}", id);
         List<Job> jobs = jobService.getJobsByCompanyId(id);
         if (jobs == null || jobs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
