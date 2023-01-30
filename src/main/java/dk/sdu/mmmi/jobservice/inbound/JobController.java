@@ -2,6 +2,7 @@ package dk.sdu.mmmi.jobservice.inbound;
 
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
+import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ public class JobController {
 
     private final JobService jobService;
 
+    private final DTOMapper dtoMapper = DTOMapper.INSTANCE;
+
     @PostMapping
     public ResponseEntity<Job> createJob(@RequestBody Job job) {
         log.info("--> createJob: {}", job);
@@ -27,8 +30,10 @@ public class JobController {
     }
 
     @PostMapping("/{id}/apply")
-    public ResponseEntity<Void> applyForJob(@PathVariable("id") long id, @RequestBody Application application) {
-        log.info("--> applyForJob: {}, id: {}", application, id);
+    public ResponseEntity<Void> applyForJob(@PathVariable("id") long id, @RequestBody ApplicationDTO applicationDTO) {
+        log.info("--> applyForJob: {}, id: {}", applicationDTO, id);
+        Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
+        application.setJob(jobService.getJob(applicationDTO.getJobId()));
         jobService.applyForJob(id, application);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
