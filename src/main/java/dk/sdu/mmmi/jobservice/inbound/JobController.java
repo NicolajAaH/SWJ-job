@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -73,7 +74,7 @@ public class JobController {
         log.info("--> getJobsByCompanyId: {}", id);
         List<Job> jobs = jobService.getJobsByCompanyId(id);
         if (jobs == null || jobs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
