@@ -18,11 +18,15 @@ public class JobServiceImplementation implements JobService {
     private final DatabaseService databaseService;
     private final ApplicationService applicationService;
 
+    private final KafkaService kafkaService;
+
     @Override
     public Job createJob(Job job) {
         log.info("--> createJob: {}", job);
         job.setCreatedAt(new Date());
-        return databaseService.createJob(job);
+        Job createdJob = databaseService.createJob(job);
+        kafkaService.sendMessage(createdJob.getId() + "");
+        return createdJob;
     }
 
     @Override

@@ -35,6 +35,8 @@ dependencies {
 	testImplementation 'com.h2database:h2'
 	implementation 'org.mapstruct:mapstruct:1.5.3.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+	implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '3.3.2'
+	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '2.8.1'
 }
 
 tasks.named('test') {
