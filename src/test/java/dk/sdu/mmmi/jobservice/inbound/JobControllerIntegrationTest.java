@@ -3,18 +3,25 @@ package dk.sdu.mmmi.jobservice.inbound;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.application.JobserviceApplication;
+import dk.sdu.mmmi.jobservice.service.interfaces.KafkaService;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.hamcrest.Matchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = JobserviceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -24,11 +31,19 @@ public class JobControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @MockBean
+    private KafkaService kafkaService;
+
+    @MockBean
+    private KafkaAdmin kafkaAdmin;
+
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void testCreateJob() throws Exception {
         Job job = TestObjects.createMockJob();
+
+        doNothing().when(kafkaService).sendMessage(anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs")
                         .contentType(MediaType.APPLICATION_JSON)
