@@ -20,6 +20,8 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    streams:
+      replication-factor: 1
 
 #LOGGING CONFIGURATION
 logging:

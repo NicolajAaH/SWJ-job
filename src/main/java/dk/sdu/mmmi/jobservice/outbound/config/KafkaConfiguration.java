@@ -9,6 +9,6 @@ import org.springframework.kafka.core.KafkaAdmin;
 public class KafkaConfiguration {
     @Bean
     public KafkaAdmin.NewTopics newTopics() {
-        return new KafkaAdmin.NewTopics(TopicBuilder.name("NEW_JOB").replicas(1).build());
+        return new KafkaAdmin.NewTopics(TopicBuilder.name("NEW_JOB").replicas(1).partitions(3).build());
     }
 }
