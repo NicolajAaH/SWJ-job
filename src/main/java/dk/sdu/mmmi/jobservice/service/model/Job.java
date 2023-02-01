@@ -5,8 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class Job {
+public class Job implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
