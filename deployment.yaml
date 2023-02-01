@@ -60,6 +60,12 @@ spec:
               value: postgres
             - name: POSTGRES_HOST
               value: postgres
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_RABBITMQ_USERNAME
+              value: java
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: java
 ---
 apiVersion: apps/v1
 kind: StatefulSet

@@ -3,7 +3,7 @@ package dk.sdu.mmmi.jobservice.inbound;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.application.JobserviceApplication;
-import dk.sdu.mmmi.jobservice.service.interfaces.KafkaService;
+import dk.sdu.mmmi.jobservice.service.interfaces.RabbitMqService;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static org.hamcrest.Matchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
@@ -32,7 +31,7 @@ public class JobControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private KafkaService kafkaService;
+    private RabbitMqService rabbitMqService;
 
     @MockBean
     private KafkaAdmin kafkaAdmin;
@@ -43,7 +42,7 @@ public class JobControllerIntegrationTest {
     public void testCreateJob() throws Exception {
         Job job = TestObjects.createMockJob();
 
-        doNothing().when(kafkaService).sendMessage(anyString());
+        doNothing().when(rabbitMqService).sendMessage(anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs")
                         .contentType(MediaType.APPLICATION_JSON)

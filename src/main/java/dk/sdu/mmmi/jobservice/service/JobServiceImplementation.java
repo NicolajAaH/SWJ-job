@@ -19,16 +19,14 @@ public class JobServiceImplementation implements JobService {
     private final DatabaseService databaseService;
     private final ApplicationService applicationService;
 
-    private final KafkaService kafkaService;
-
-    private Gson gson = new Gson();
+    private final RabbitMqService rabbitMqService;
 
     @Override
     public Job createJob(Job job) {
         log.info("--> createJob: {}", job);
         job.setCreatedAt(new Date());
         Job createdJob = databaseService.createJob(job);
-        kafkaService.sendMessage(gson.toJson(createdJob));
+        rabbitMqService.sendMessage(createdJob);
         return createdJob;
     }
 
