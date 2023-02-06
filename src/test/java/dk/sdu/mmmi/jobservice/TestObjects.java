@@ -1,7 +1,6 @@
 package dk.sdu.mmmi.jobservice;
 
-import dk.sdu.mmmi.jobservice.service.model.Job;
-import dk.sdu.mmmi.jobservice.service.model.JobType;
+import dk.sdu.mmmi.jobservice.service.model.*;
 
 public class TestObjects {
 
@@ -20,4 +19,25 @@ public class TestObjects {
         return job;
     }
 
+    public static Application createMockApplication() {
+        Application application = new Application();
+        application.setJob(createMockJob());
+        application.setUserId("userIdUUID");
+        application.setCreatedAt(new java.util.Date());
+        application.setUpdatedAt(new java.util.Date());
+        application.setId(1L);
+        application.setStatus(ApplicationStatus.PENDING);
+        return application;
+    }
+
+    public static ApplicationDTO createMockApplicationDTO() {
+        ApplicationDTO application = new ApplicationDTO();
+        application.setJobId(1L);
+        application.setUserId("userIdUUID");
+        application.setCreatedAt(new java.util.Date());
+        application.setUpdatedAt(new java.util.Date());
+        application.setId(1L);
+        application.setStatus(ApplicationStatus.PENDING);
+        return application;
+    }
 }

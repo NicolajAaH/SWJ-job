@@ -2,6 +2,8 @@ package dk.sdu.mmmi.jobservice.inbound;
 
 import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
+import dk.sdu.mmmi.jobservice.service.model.Application;
+import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import dk.sdu.mmmi.jobservice.service.model.JobType;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,9 @@ import org.mockito.Mock;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,4 +132,94 @@ class JobControllerTest {
         verify(jobService, times(1)).deleteJob(anyLong());
         verifyNoMoreInteractions(jobService);
     }
+
+    @Test
+    void applyForJob() {
+        ApplicationDTO mockJobApplication = TestObjects.createMockApplicationDTO();
+        doNothing().when(jobService).applyForJob(anyLong(), any(Application.class));
+
+        ResponseEntity<Void> response = jobController.applyForJob(1L, mockJobApplication);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    }
+
+    @Test
+    void getJobs() {
+        Job mockJob = TestObjects.createMockJob();
+        List<Job> mockJobs = new ArrayList<>();
+        mockJobs.add(mockJob);
+
+        when(jobService.getJobs()).thenReturn(mockJobs);
+
+        ResponseEntity<List<Job>> response = jobController.getJobs();
+        List<Job> jobs = response.getBody();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(jobs).isNotNull();
+        assertThat(jobs.size()).isEqualTo(1);
+        assertThat(jobs.get(0).getId()).isEqualTo(1L);
+        assertThat(jobs.get(0).getTitle()).isEqualTo("Test Title");
+        assertThat(jobs.get(0).getDescription()).isEqualTo("This is a test job");
+        assertThat(jobs.get(0).getLocation()).isEqualTo("Test City");
+        assertThat(jobs.get(0).getSalary()).isEqualTo(100000.00);
+        assertThat(jobs.get(0).getJobType()).isEqualTo(JobType.BACKEND);
+        assertThat(jobs.get(0).getCreatedAt()).isNotNull();
+        assertThat(jobs.get(0).getUpdatedAt()).isNotNull();
+        assertThat(jobs.get(0).getExpiresAt()).isNotNull();
+
+        verify(jobService, times(1)).getJobs();
+        verifyNoMoreInteractions(jobService);
+    }
+
+
+    @Test
+    void getJobApplications() {
+        Application mockApplication = TestObjects.createMockApplication();
+        List<Application> mockApplications = new ArrayList<>();
+        mockApplications.add(mockApplication);
+
+        when(jobService.getJobApplications(anyLong())).thenReturn(mockApplications);
+
+        ResponseEntity<List<Application>> response = jobController.getJobApplications(1L);
+        List<Application> applications = response.getBody();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(applications).isNotNull();
+        assertThat(applications.size()).isEqualTo(1);
+        assertThat(applications.get(0).getId()).isEqualTo(1L);
+        assertThat(applications.get(0).getUserId()).isEqualTo("userIdUUID");
+        assertThat(applications.get(0).getCreatedAt()).isNotNull();
+        assertThat(applications.get(0).getUpdatedAt()).isNotNull();
+
+        verify(jobService, times(1)).getJobApplications(anyLong());
+        verifyNoMoreInteractions(jobService);
+    }
+
+    @Test
+    void getJobsByCompanyId() {
+        Job mockJob = TestObjects.createMockJob();
+        List<Job> mockJobs = new ArrayList<>();
+        mockJobs.add(mockJob);
+
+        when(jobService.getJobsByCompanyId(anyLong())).thenReturn(mockJobs);
+
+        ResponseEntity<List<Job>> response = jobController.getJobsByCompanyId(1L);
+        List<Job> jobs = response.getBody();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(jobs).isNotNull();
+        assertThat(jobs.size()).isEqualTo(1);
+        assertThat(jobs.get(0).getId()).isEqualTo(1L);
+        assertThat(jobs.get(0).getTitle()).isEqualTo("Test Title");
+        assertThat(jobs.get(0).getDescription()).isEqualTo("This is a test job");
+        assertThat(jobs.get(0).getLocation()).isEqualTo("Test City");
+        assertThat(jobs.get(0).getSalary()).isEqualTo(100000.00);
+        assertThat(jobs.get(0).getJobType()).isEqualTo(JobType.BACKEND);
+        assertThat(jobs.get(0).getCreatedAt()).isNotNull();
+        assertThat(jobs.get(0).getUpdatedAt()).isNotNull();
+        assertThat(jobs.get(0).getExpiresAt()).isNotNull();
+
+        verify(jobService, times(1)).getJobsByCompanyId(anyLong());
+        verifyNoMoreInteractions(jobService);
+    }
+
 }
