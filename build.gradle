@@ -37,6 +37,7 @@ dependencies {
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.3.Final'
 	implementation 'com.google.code.gson:gson'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	testImplementation "org.assertj:assertj-core"
 }
 
 tasks.named('test') {

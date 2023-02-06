@@ -3,11 +3,13 @@ package dk.sdu.mmmi.jobservice.service;
 import dk.sdu.mmmi.jobservice.service.interfaces.ApplicationService;
 import dk.sdu.mmmi.jobservice.service.interfaces.DatabaseService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
+import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -43,6 +45,11 @@ public class ApplicationServiceImplementation implements ApplicationService {
     @Override
     public List<Application> getJobApplications(long id) {
         log.info("--> getJobApplications: {}", id);
-        return new ArrayList<>(databaseService.getJob(id).getApplications());
+        Job job = databaseService.getJob(id);
+        if(job == null){
+            log.error("Job with id {} not found", id);
+            return Collections.emptyList();
+        }
+        return new ArrayList<>(job.getApplications());
     }
 }

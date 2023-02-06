@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -67,10 +68,44 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testDeleteJob() throws Exception {
         long id = 1;
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/jobs/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
+    @Test
+    public void testGetAllJobs() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testApplyForJob() throws Exception {
+        long id = 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs/{id}/apply", id)
+                        .content(objectMapper.writeValueAsString(TestObjects.createMockApplicationDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testGetJobApplications() throws Exception {
+        long id = 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/{id}/applications", id))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void testGetJobsByCompanyId() throws Exception {
+        long id = 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/companies/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
 }
