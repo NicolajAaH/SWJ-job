@@ -49,6 +49,16 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    public void testCreateJobNoBody() throws Exception {
+        Job job = TestObjects.createMockJob();
+
+        doNothing().when(rabbitMqService).sendMessage(anyString());
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
     public void testGetJob() throws Exception {
         long id = 1;
 
@@ -68,12 +78,27 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    public void testUpdateJobNoBody() throws Exception {
+        long id = 2;
+        Job job = TestObjects.createMockJob();
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/jobs/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
+    }
+
+    @Test
     @DirtiesContext
     public void testDeleteJob() throws Exception {
         long id = 1;
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/jobs/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void testDeleteJobNoId() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/jobs/"))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
     @Test
@@ -90,6 +115,14 @@ public class JobControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(TestObjects.createMockApplicationDTO()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testApplyForJobNoBody() throws Exception {
+        long id = 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs/{id}/apply", id))
+                .andExpect(MockMvcResultMatchers.status().is4xxClientError());
     }
 
     @Test
