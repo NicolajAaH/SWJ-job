@@ -9,7 +9,7 @@ env:
     AZURE_CONTAINER_REGISTRY: acrworkflow1676837869069
     CLUSTER_NAME: job-boards-aks
     CLUSTER_RESOURCE_GROUP: job-boards-rg
-    CONTAINER_NAME: image-workflow-1676837869069
+    CONTAINER_NAME: jobservice
     DEPLOYMENT_MANIFEST_PATH: |
         ./deployment.yaml
 jobs:
@@ -61,4 +61,4 @@ jobs:
                 action: deploy
                 images: ${{ env.AZURE_CONTAINER_REGISTRY }}.azurecr.io/${{ env.CONTAINER_NAME }}:${{ github.sha }}
                 manifests: ${{ env.DEPLOYMENT_MANIFEST_PATH }}
-                namespace: namespace-workflow-1676837869069
+                namespace: default
