@@ -3,7 +3,7 @@ package dk.sdu.mmmi.jobservice.inbound;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.application.JobserviceApplication;
-import dk.sdu.mmmi.jobservice.service.interfaces.RabbitMqService;
+import dk.sdu.mmmi.jobservice.service.interfaces.MqService;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@ public class JobControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private RabbitMqService rabbitMqService;
+    private MqService mqService;
 
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -40,7 +40,7 @@ public class JobControllerIntegrationTest {
     public void testCreateJob() throws Exception {
         Job job = TestObjects.createMockJob();
 
-        doNothing().when(rabbitMqService).sendMessage(anyString());
+        doNothing().when(mqService).sendMessage(anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -52,7 +52,7 @@ public class JobControllerIntegrationTest {
     public void testCreateJobNoBody() throws Exception {
         Job job = TestObjects.createMockJob();
 
-        doNothing().when(rabbitMqService).sendMessage(anyString());
+        doNothing().when(mqService).sendMessage(anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs"))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
