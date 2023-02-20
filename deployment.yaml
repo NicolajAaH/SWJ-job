@@ -61,7 +61,10 @@ spec:
             - name: POSTGRES_HOST
               value: postgres
             - name: SPRING_JMS_SERVICEBUS_CONNECTION-STRING
-              value: Endpoint=sb://job-boards-service-bus.servicebus.windows.net/;SharedAccessKeyName=Job-Service;SharedAccessKey=qwtrCSNSyfZrhmm1dZ0/TMNNZ5VJWBQqi+ASbGj30QE=
+              valueFrom:
+                secretKeyRef:
+                  name: jobservicesecret
+                  key: connection-string
             - name: SPRING_JMS_SERVICEBUS_PRICING-TIER
               value: standard
 
