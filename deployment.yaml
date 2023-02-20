@@ -60,12 +60,14 @@ spec:
               value: postgres
             - name: POSTGRES_HOST
               value: postgres
-            - name: SPRING_RABBITMQ_HOST
-              value: rabbitmq-service
-            - name: SPRING_RABBITMQ_USERNAME
-              value: guest
-            - name: SPRING_RABBITMQ_PASSWORD
-              value: guest
+            - name: SPRING_JMS_SERVICEBUS_CONNECTION-STRING
+              valueFrom:
+                secretKeyRef:
+                  name: jobservicesecret
+                  key: connection-string
+            - name: SPRING_JMS_SERVICEBUS_PRICING-TIER
+              value: standard
+
 ---
 apiVersion: apps/v1
 kind: StatefulSet

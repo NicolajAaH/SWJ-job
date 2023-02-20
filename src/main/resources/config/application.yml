@@ -15,11 +15,13 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         default_schema: public
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: java
-    password: java
+  jms:
+    servicebus:
+      connection-string: Endpoint=sb://job-boards-service-bus.servicebus.windows.net/;SharedAccessKeyName=Job-Service;SharedAccessKey=key
+      pricing-tier: standard
+
+mq:
+  topic: new_job
 
 #LOGGING CONFIGURATION
 logging:

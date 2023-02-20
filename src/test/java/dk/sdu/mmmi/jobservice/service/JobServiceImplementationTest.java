@@ -4,20 +4,16 @@ import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.interfaces.ApplicationService;
 import dk.sdu.mmmi.jobservice.service.interfaces.DatabaseService;
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
-import dk.sdu.mmmi.jobservice.service.interfaces.RabbitMqService;
+import dk.sdu.mmmi.jobservice.service.interfaces.MqService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -34,13 +30,13 @@ public class JobServiceImplementationTest {
     private ApplicationService applicationService;
 
     @Mock
-    private RabbitMqService rabbitMqService;
+    private MqService mqService;
 
     private JobService jobService;
 
     @BeforeEach
     public void setUp() {
-        jobService = new JobServiceImplementation(databaseService, applicationService, rabbitMqService);
+        jobService = new JobServiceImplementation(databaseService, applicationService, mqService);
     }
 
     @Test
@@ -52,9 +48,9 @@ public class JobServiceImplementationTest {
 
         assertThat(job).isEqualTo(createdJob);
         verify(databaseService, times(1)).createJob(any(Job.class));
-        verify(rabbitMqService, times(1)).sendMessage(createdJob);
+        verify(mqService, times(1)).sendMessage(createdJob);
         verifyNoMoreInteractions(databaseService);
-        verifyNoMoreInteractions(rabbitMqService);
+        verifyNoMoreInteractions(mqService);
         verifyNoInteractions(applicationService);
     }
 
@@ -69,7 +65,7 @@ public class JobServiceImplementationTest {
         assertThat(job).isEqualTo(retrievedJob);
         verify(databaseService, times(1)).getJob(id);
         verifyNoMoreInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoInteractions(applicationService);
     }
 
@@ -84,7 +80,7 @@ public class JobServiceImplementationTest {
         assertThat(job).isEqualTo(updatedJob);
         verify(databaseService, times(1)).updateJob(id, job);
         verifyNoMoreInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoInteractions(applicationService);
     }
 
@@ -94,7 +90,7 @@ public class JobServiceImplementationTest {
         jobService.deleteJob(id);
         verify(databaseService, times(1)).deleteJob(id);
         verifyNoMoreInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoInteractions(applicationService);
     }
 
@@ -105,7 +101,7 @@ public class JobServiceImplementationTest {
         jobService.applyForJob(id, application);
         verify(applicationService, times(1)).createApplication(application);
         verifyNoInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoMoreInteractions(applicationService);
     }
 
@@ -123,7 +119,7 @@ public class JobServiceImplementationTest {
         assertEquals(applications, retrievedApplications);
         verify(applicationService, times(1)).getJobApplications(anyLong());
         verifyNoInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoMoreInteractions(applicationService);
     }
 
@@ -141,7 +137,7 @@ public class JobServiceImplementationTest {
         assertThat(retrievedJobs).isEqualTo(jobs);
         verify(databaseService, times(1)).getJobsByCompanyId(anyLong());
         verifyNoMoreInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoInteractions(applicationService);
     }
 
@@ -158,7 +154,7 @@ public class JobServiceImplementationTest {
         assertThat(retrievedJobs).isEqualTo(jobs);
         verify(databaseService, times(1)).getJobs();
         verifyNoMoreInteractions(databaseService);
-        verifyNoInteractions(rabbitMqService);
+        verifyNoInteractions(mqService);
         verifyNoInteractions(applicationService);
     }
 }

@@ -38,6 +38,10 @@ dependencies {
 	implementation 'com.google.code.gson:gson'
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 	testImplementation "org.assertj:assertj-core"
+
+	implementation group: 'org.springframework', name: 'spring-jms', version: '6.0.5'
+
+	implementation 'com.azure.spring:spring-cloud-azure-starter-servicebus-jms:5.0.0'
 }
 
 tasks.named('test') {
