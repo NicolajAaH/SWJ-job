@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgresql-initdb-config
+  name: postgresql-initdb-config-job
 data:
   init.sql: |
     ALTER USER postgres PASSWORD 'password';
@@ -87,9 +87,9 @@ spec:
         - name: postgres
           image: postgres:latest
           volumeMounts:
-            - name: postgresql-initdb
+            - name: postgresql-initdb-job
               mountPath: /docker-entrypoint-initdb.d
-            - name: postgres-persistent-storage
+            - name: postgres-persistent-storage-job
               mountPath: /data
           env:
             - name: POSTGRES_USER
@@ -103,12 +103,12 @@ spec:
           ports:
             - containerPort: 5432
       volumes:
-        - name: postgresql-initdb
+        - name: postgresql-initdb-job
           configMap:
-            name: postgresql-initdb-config
+            name: postgresql-initdb-config-job
   volumeClaimTemplates:
   - metadata:
-      name: postgres-persistent-storage
+      name: postgres-persistent-storage-job
       annotations:
         volume.beta.kubernetes.io/storage-class: "standard"
     spec:
