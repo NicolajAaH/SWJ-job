@@ -23,4 +23,6 @@ public interface JobService {
     List<Job> getJobs();
 
     void updateApplication(long id, Application application);
+
+    Application getApplication(long id);
 }

@@ -103,7 +103,11 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
-        application.setJob(jobService.getJob(applicationDTO.getJobId()));
+        Application oldApplication = jobService.getApplication(id);
+        if(oldApplication == null){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        application.setJob(oldApplication.getJob());
         jobService.updateApplication(id, application);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

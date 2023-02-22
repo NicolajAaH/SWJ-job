@@ -78,4 +78,10 @@ public class JobServiceImplementation implements JobService {
         application.setUpdatedAt(new Date());
         applicationService.updateApplication(id, application);
     }
+
+    @Override
+    public Application getApplication(long id) {
+        log.info("--> getApplication: {}", id);
+        return applicationService.getApplication(id);
+    }
 }
