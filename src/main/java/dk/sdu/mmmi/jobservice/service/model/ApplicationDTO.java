@@ -25,4 +25,6 @@ public class ApplicationDTO {
 
     private Long jobId;
 
+    private String application;
+
 }

@@ -38,4 +38,6 @@ public class Application {
     @JsonBackReference
     private Job job;
 
+    @Column(name = "application_text", nullable = false)
+    private String application;
 }
