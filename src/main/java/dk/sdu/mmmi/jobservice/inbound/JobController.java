@@ -63,7 +63,7 @@ public class JobController {
     public ResponseEntity<List<Application>> getJobApplications(@PathVariable("id") long id) {
         log.info("--> getJob: {}", id);
         List<Application> applications = jobService.getJobApplications(id);
-        if (applications == null || applications.isEmpty()) {
+        if (applications == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(applications, HttpStatus.OK);

@@ -2,7 +2,6 @@ package dk.sdu.mmmi.jobservice.outbound;
 
 import com.google.gson.Gson;
 import dk.sdu.mmmi.jobservice.service.interfaces.MqService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
