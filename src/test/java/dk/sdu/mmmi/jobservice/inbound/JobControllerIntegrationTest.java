@@ -141,4 +141,24 @@ public class JobControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    public void testUpdateApplication() throws Exception {
+        long id = 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/jobs/application/{id}", id)
+                        .content(objectMapper.writeValueAsString(TestObjects.createMockApplicationDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testUpdateApplicationBadRequest() throws Exception {
+        long id = 2; //Id does not match the object
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/jobs/application/{id}", id)
+                        .content(objectMapper.writeValueAsString(TestObjects.createMockApplicationDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
 }

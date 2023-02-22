@@ -71,4 +71,11 @@ public class JobServiceImplementation implements JobService {
         log.info("--> getJobs");
         return databaseService.getJobs();
     }
+
+    @Override
+    public void updateApplication(long id, Application application) {
+        log.info("--> updateApplication: {}", application);
+        application.setUpdatedAt(new Date());
+        applicationService.updateApplication(id, application);
+    }
 }

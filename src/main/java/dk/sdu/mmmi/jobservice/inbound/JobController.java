@@ -95,4 +95,16 @@ public class JobController {
         jobService.deleteJob(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PutMapping("/application/{id}")
+    public ResponseEntity<Void> updateApplication(@PathVariable("id") long id, @RequestBody ApplicationDTO applicationDTO) {
+        log.info("--> updateApplication: {}", applicationDTO);
+        if(id != applicationDTO.getId()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
+        application.setJob(jobService.getJob(applicationDTO.getJobId()));
+        jobService.updateApplication(id, application);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
