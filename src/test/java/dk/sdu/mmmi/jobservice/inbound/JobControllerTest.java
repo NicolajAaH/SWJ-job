@@ -1,6 +1,7 @@
 package dk.sdu.mmmi.jobservice.inbound;
 
 import dk.sdu.mmmi.jobservice.TestObjects;
+import dk.sdu.mmmi.jobservice.service.interfaces.ApplicationService;
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
@@ -27,6 +28,9 @@ class JobControllerTest {
     @Mock
     private JobService jobService;
 
+    @Mock
+    private ApplicationService applicationService;
+
     private JobController jobController;
 
 
@@ -34,7 +38,7 @@ class JobControllerTest {
     @BeforeEach
     void setUp() {
         // Create an instance of JobController with the mocked JobService
-        jobController = new JobController(jobService);
+        jobController = new JobController(jobService, applicationService);
     }
 
     @Test

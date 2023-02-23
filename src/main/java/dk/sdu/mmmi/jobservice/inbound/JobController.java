@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.jobservice.inbound;
 
+import dk.sdu.mmmi.jobservice.service.interfaces.ApplicationService;
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
@@ -20,6 +21,8 @@ import java.util.List;
 public class JobController {
 
     private final JobService jobService;
+
+    private final ApplicationService applicationService;
 
     private final DTOMapper dtoMapper = DTOMapper.INSTANCE;
 
@@ -103,12 +106,22 @@ public class JobController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
-        Application oldApplication = jobService.getApplication(id);
+        Application oldApplication = applicationService.getApplication(id);
         if(oldApplication == null){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         application.setJob(oldApplication.getJob());
-        jobService.updateApplication(id, application);
+        applicationService.updateApplication(id, application);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/applications/{userId}")
+    public ResponseEntity<List<Application>> getApplicationsByUserId(@PathVariable("userId") String userId) {
+        log.info("--> getApplicationsByUserId: {}", userId);
+        List<Application> applications = applicationService.getApplicationsByUserId(userId);
+        if (applications == null || applications.isEmpty()) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(applications, HttpStatus.OK);
     }
 }

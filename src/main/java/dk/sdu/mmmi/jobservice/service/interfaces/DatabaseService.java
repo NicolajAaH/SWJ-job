@@ -26,4 +26,5 @@ public interface DatabaseService {
 
     List<Job> getJobs();
 
+    List<Application> getApplicationsByUserId(String userId);
 }

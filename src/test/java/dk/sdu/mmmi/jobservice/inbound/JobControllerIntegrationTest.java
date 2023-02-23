@@ -161,4 +161,20 @@ public class JobControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    @Test
+    public void testGetApplicationsByUserId() throws Exception {
+        String id = "userid123";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/applications/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testGetApplicationsByUserIdNotExisting() throws Exception {
+        String id = "fakeuserid123";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/applications/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
 }
