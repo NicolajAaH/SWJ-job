@@ -80,6 +80,6 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public List<Job> searchJobs(String searchTerm) {
         //Calling with same parameter twice to search both title and description
-        return jobRepository.findAllByTitleContainingOrDescriptionContaining(searchTerm, searchTerm);
+        return jobRepository.findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(searchTerm, searchTerm);
     }
 }

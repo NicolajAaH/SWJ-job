@@ -11,5 +11,5 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     List<Job> findAllByCompanyId(Long id);
 
-    List<Job> findAllByTitleContainingOrDescriptionContaining(String searchTerm, String searchTerm2);
+    List<Job> findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String searchTerm, String searchTerm2);
 }
