@@ -124,4 +124,14 @@ public class JobController {
         }
         return new ResponseEntity<>(applications, HttpStatus.OK);
     }
+
+    @GetMapping("/search/{searchTerm}")
+    public ResponseEntity<List<Job>> searchJobs(@PathVariable("searchTerm") String searchTerm) {
+        log.info("--> searchJobs: {}", searchTerm);
+        List<Job> jobs = jobService.searchJobs(searchTerm);
+        if (jobs == null || jobs.isEmpty()) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
+    }
 }

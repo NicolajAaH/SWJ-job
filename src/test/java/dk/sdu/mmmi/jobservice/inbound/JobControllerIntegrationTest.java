@@ -5,6 +5,7 @@ import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.application.JobserviceApplication;
 import dk.sdu.mmmi.jobservice.service.interfaces.MqService;
 import dk.sdu.mmmi.jobservice.service.model.Job;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,6 +176,20 @@ public class JobControllerIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/applications/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testSearchJobs() throws Exception {
+        String search = "test";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+    }
+
+    @Test
+    public void testSearchJobsNoResults() throws Exception {
+        String search = "NoJobs";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
+                .andExpect(MockMvcResultMatchers.status().isNoContent()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
     }
 
 }

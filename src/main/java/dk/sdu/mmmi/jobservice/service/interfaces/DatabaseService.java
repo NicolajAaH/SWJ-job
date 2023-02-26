@@ -27,4 +27,6 @@ public interface DatabaseService {
     List<Job> getJobs();
 
     List<Application> getApplicationsByUserId(String userId);
+
+    List<Job> searchJobs(String searchTerm);
 }

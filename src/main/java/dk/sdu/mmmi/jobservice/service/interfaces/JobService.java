@@ -25,4 +25,6 @@ public interface JobService {
     void updateApplication(long id, Application application);
 
     Application getApplication(long id);
+
+    List<Job> searchJobs(String searchTerm);
 }

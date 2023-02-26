@@ -76,4 +76,10 @@ public class DatabaseServiceImpl implements DatabaseService {
     public List<Application> getApplicationsByUserId(String userId) {
         return applicationRepository.findAllByUserId(userId);
     }
+
+    @Override
+    public List<Job> searchJobs(String searchTerm) {
+        //Calling with same parameter twice to search both title and description
+        return jobRepository.findAllByTitleContainingOrDescriptionContaining(searchTerm, searchTerm);
+    }
 }

@@ -84,4 +84,10 @@ public class JobServiceImplementation implements JobService {
         log.info("--> getApplication: {}", id);
         return applicationService.getApplication(id);
     }
+
+    @Override
+    public List<Job> searchJobs(String searchTerm) {
+        log.info("--> searchJobs: {}", searchTerm);
+        return databaseService.searchJobs(searchTerm);
+    }
 }
