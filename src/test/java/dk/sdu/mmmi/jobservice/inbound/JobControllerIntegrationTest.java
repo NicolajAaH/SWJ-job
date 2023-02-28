@@ -68,6 +68,7 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testUpdateJob() throws Exception {
         long id = 2;
         Job job = TestObjects.createMockJob();
@@ -143,6 +144,7 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testUpdateApplication() throws Exception {
         long id = 1;
 
@@ -190,6 +192,38 @@ public class JobControllerIntegrationTest {
         String search = "NoJobs";
         mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
                 .andExpect(MockMvcResultMatchers.status().isNoContent()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
+    }
+
+    @Test
+    public void testFilterJobs() throws Exception {
+        double salary = 1000.00;
+        String location = "DK";
+        String jobType = "BACKEND";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&location={location}&jobType={jobType}", salary, location, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+    }
+
+    @Test
+    public void testFilterJobsMissingLocation() throws Exception {
+        double salary = 1000.00;
+        String jobType = "BACKEND";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+    }
+
+    @Test
+    public void testFilterJobsOnlySalary() throws Exception {
+        double salary = 1000.00;
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}", salary))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+    }
+
+    @Test
+    public void testFilterJobsMissingLocationFrontend() throws Exception {
+        double salary = 1000.00;
+        String jobType = "FRONTEND";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
     }
 
 }

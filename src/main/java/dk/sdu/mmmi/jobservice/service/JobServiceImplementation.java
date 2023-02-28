@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -89,5 +90,11 @@ public class JobServiceImplementation implements JobService {
     public List<Job> searchJobs(String searchTerm) {
         log.info("--> searchJobs: {}", searchTerm);
         return databaseService.searchJobs(searchTerm);
+    }
+
+    @Override
+    public List<Job> filterJobs(Map<String, String> allRequestParams) {
+        log.info("--> filterJobs: {}", allRequestParams);
+        return databaseService.filterJobs(allRequestParams);
     }
 }

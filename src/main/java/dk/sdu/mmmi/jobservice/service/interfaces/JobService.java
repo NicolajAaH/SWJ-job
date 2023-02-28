@@ -4,6 +4,7 @@ import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 
 import java.util.List;
+import java.util.Map;
 
 public interface JobService {
     Job createJob(Job job);
@@ -27,4 +28,6 @@ public interface JobService {
     Application getApplication(long id);
 
     List<Job> searchJobs(String searchTerm);
+
+    List<Job> filterJobs(Map<String, String> allRequestParams);
 }

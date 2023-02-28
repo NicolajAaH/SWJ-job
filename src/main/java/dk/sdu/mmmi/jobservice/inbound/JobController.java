@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -132,6 +133,17 @@ public class JobController {
         if (jobs == null || jobs.isEmpty()) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Job>> filterJobs(@RequestParam Map<String, String> allRequestParams) {
+        log.info("--> filterJobs: {}", allRequestParams);
+        List<Job> jobs = jobService.filterJobs(allRequestParams);
+        if (jobs == null || jobs.isEmpty()) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
+        }
+        log.info("Found {} jobs", jobs.size());
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 }
