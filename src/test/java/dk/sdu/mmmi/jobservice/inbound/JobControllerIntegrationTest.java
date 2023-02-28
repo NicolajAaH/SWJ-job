@@ -226,4 +226,12 @@ public class JobControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
     }
 
+    @Test
+    public void testFilterJobsEmptyString() throws Exception {
+        double salary = 1000.00;
+        String jobType = "";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+    }
+
 }

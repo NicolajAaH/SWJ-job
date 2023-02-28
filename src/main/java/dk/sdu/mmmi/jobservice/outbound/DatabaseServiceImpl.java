@@ -89,6 +89,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public List<Job> filterJobs(Map<String, String> allRequestParams) {
+        allRequestParams.values().removeIf(String::isEmpty);
         if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("location") && allRequestParams.containsKey("jobType")) {
             JobType jobType = JobType.valueOf(allRequestParams.get("jobType"));
             return jobRepository.findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobType(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), jobType);
