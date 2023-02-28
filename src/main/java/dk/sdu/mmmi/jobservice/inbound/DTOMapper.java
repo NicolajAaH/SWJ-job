@@ -13,4 +13,7 @@ public interface DTOMapper {
 
     @Mapping(target = "job", ignore = true)
     Application applicationDTOToApplication(ApplicationDTO applicationDTO);
+
+    @Mapping(target = "jobId", source = "job.id")
+    ApplicationDTO applicationToApplicationDTO(Application application);
 }

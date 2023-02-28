@@ -117,13 +117,14 @@ public class JobController {
     }
 
     @GetMapping("/applications/{userId}")
-    public ResponseEntity<List<Application>> getApplicationsByUserId(@PathVariable("userId") String userId) {
+    public ResponseEntity<List<ApplicationDTO>> getApplicationsByUserId(@PathVariable("userId") String userId) {
         log.info("--> getApplicationsByUserId: {}", userId);
         List<Application> applications = applicationService.getApplicationsByUserId(userId);
         if (applications == null || applications.isEmpty()) {
             return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(applications, HttpStatus.OK);
+        List<ApplicationDTO> applicationDTOS = applications.stream().map(dtoMapper::applicationToApplicationDTO).toList();
+        return new ResponseEntity<>(applicationDTOS, HttpStatus.OK);
     }
 
     @GetMapping("/search/{searchTerm}")
