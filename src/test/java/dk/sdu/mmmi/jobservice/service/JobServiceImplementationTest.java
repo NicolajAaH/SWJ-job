@@ -74,11 +74,13 @@ public class JobServiceImplementationTest {
         long id = 1L;
         Job job = TestObjects.createMockJob();
         when(databaseService.updateJob(id, job)).thenReturn(job);
+        when(databaseService.getJob(id)).thenReturn(job);
 
         Job updatedJob = jobService.updateJob(id, job);
 
         assertThat(job).isEqualTo(updatedJob);
         verify(databaseService, times(1)).updateJob(id, job);
+        verify(databaseService, times(1)).getJob(id);
         verifyNoMoreInteractions(databaseService);
         verifyNoInteractions(mqService);
         verifyNoInteractions(applicationService);
