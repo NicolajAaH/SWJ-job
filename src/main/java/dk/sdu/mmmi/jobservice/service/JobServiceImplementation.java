@@ -40,6 +40,16 @@ public class JobServiceImplementation implements JobService {
     public Job updateJob(long id, Job job) {
         log.info("--> updateJob: {}", job);
         job.setUpdatedAt(new Date());
+        if(job.getCompanyId() != null){
+            log.error("Company id cannot be updated");
+            return null;
+        }
+        Job originalJob = getJob(id);
+        if (originalJob == null) {
+            log.error("Job with id {} not found", id);
+            return null;
+        }
+        job.setCompanyId(originalJob.getCompanyId());
         return databaseService.updateJob(id, job);
     }
 
