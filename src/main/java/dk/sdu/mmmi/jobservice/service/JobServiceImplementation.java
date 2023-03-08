@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,16 @@ public class JobServiceImplementation implements JobService {
     public Job updateJob(long id, Job job) {
         log.info("--> updateJob: {}", job);
         job.setUpdatedAt(new Date());
+        if(job.getCompanyId() != null){
+            log.warn("Attempt to change company id of job with id {}", id);
+            job.setCompanyId(null);
+        }
+        Job originalJob = databaseService.getJob(id);
+        if (originalJob == null) {
+            log.error("Job with id {} not found", id);
+            return null;
+        }
+        job.setCompanyId(originalJob.getCompanyId());
         return databaseService.updateJob(id, job);
     }
 
@@ -70,5 +81,30 @@ public class JobServiceImplementation implements JobService {
     public List<Job> getJobs() {
         log.info("--> getJobs");
         return databaseService.getJobs();
+    }
+
+    @Override
+    public void updateApplication(long id, Application application) {
+        log.info("--> updateApplication: {}", application);
+        application.setUpdatedAt(new Date());
+        applicationService.updateApplication(id, application);
+    }
+
+    @Override
+    public Application getApplication(long id) {
+        log.info("--> getApplication: {}", id);
+        return applicationService.getApplication(id);
+    }
+
+    @Override
+    public List<Job> searchJobs(String searchTerm) {
+        log.info("--> searchJobs: {}", searchTerm);
+        return databaseService.searchJobs(searchTerm);
+    }
+
+    @Override
+    public List<Job> filterJobs(Map<String, String> allRequestParams) {
+        log.info("--> filterJobs: {}", allRequestParams);
+        return databaseService.filterJobs(allRequestParams);
     }
 }

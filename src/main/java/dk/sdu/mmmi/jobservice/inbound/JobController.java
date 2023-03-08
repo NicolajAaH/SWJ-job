@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.jobservice.inbound;
 
+import dk.sdu.mmmi.jobservice.service.interfaces.ApplicationService;
 import dk.sdu.mmmi.jobservice.service.interfaces.JobService;
 import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/jobs")
@@ -20,6 +22,8 @@ import java.util.List;
 public class JobController {
 
     private final JobService jobService;
+
+    private final ApplicationService applicationService;
 
     private final DTOMapper dtoMapper = DTOMapper.INSTANCE;
 
@@ -63,7 +67,7 @@ public class JobController {
     public ResponseEntity<List<Application>> getJobApplications(@PathVariable("id") long id) {
         log.info("--> getJob: {}", id);
         List<Application> applications = jobService.getJobApplications(id);
-        if (applications == null || applications.isEmpty()) {
+        if (applications == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(applications, HttpStatus.OK);
@@ -94,5 +98,53 @@ public class JobController {
         log.info("--> deleteJob: {}", id);
         jobService.deleteJob(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/application/{id}")
+    public ResponseEntity<Void> updateApplication(@PathVariable("id") long id, @RequestBody ApplicationDTO applicationDTO) {
+        log.info("--> updateApplication: {}", applicationDTO);
+        if(id != applicationDTO.getId()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
+        Application oldApplication = applicationService.getApplication(id);
+        if(oldApplication == null){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        application.setJob(oldApplication.getJob());
+        applicationService.updateApplication(id, application);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/applications/{userId}")
+    public ResponseEntity<List<ApplicationDTO>> getApplicationsByUserId(@PathVariable("userId") String userId) {
+        log.info("--> getApplicationsByUserId: {}", userId);
+        List<Application> applications = applicationService.getApplicationsByUserId(userId);
+        if (applications == null || applications.isEmpty()) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
+        }
+        List<ApplicationDTO> applicationDTOS = applications.stream().map(dtoMapper::applicationToApplicationDTO).toList();
+        return new ResponseEntity<>(applicationDTOS, HttpStatus.OK);
+    }
+
+    @GetMapping("/search/{searchTerm}")
+    public ResponseEntity<List<Job>> searchJobs(@PathVariable("searchTerm") String searchTerm) {
+        log.info("--> searchJobs: {}", searchTerm);
+        List<Job> jobs = jobService.searchJobs(searchTerm);
+        if (jobs == null || jobs.isEmpty()) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<List<Job>> filterJobs(@RequestParam Map<String, String> allRequestParams) {
+        log.info("--> filterJobs: {}", allRequestParams);
+        List<Job> jobs = jobService.filterJobs(allRequestParams);
+        if (jobs == null || jobs.isEmpty()) {
+            return new ResponseEntity<>(Collections.emptyList(), HttpStatus.NO_CONTENT);
+        }
+        log.info("Found {} jobs", jobs.size());
+        return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 }

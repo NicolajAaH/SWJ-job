@@ -15,4 +15,6 @@ public interface ApplicationService {
     void deleteApplication(long id);
 
     List<Application> getJobApplications(long id);
+
+    List<Application> getApplicationsByUserId(String userId);
 }

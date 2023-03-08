@@ -38,6 +38,7 @@ public class TestObjects {
         application.setUpdatedAt(new java.util.Date());
         application.setId(1L);
         application.setStatus(ApplicationStatus.PENDING);
+        application.setApplication("This is a test application");
         return application;
     }
 }

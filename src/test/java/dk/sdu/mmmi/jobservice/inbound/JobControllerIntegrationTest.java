@@ -5,6 +5,7 @@ import dk.sdu.mmmi.jobservice.TestObjects;
 import dk.sdu.mmmi.jobservice.service.application.JobserviceApplication;
 import dk.sdu.mmmi.jobservice.service.interfaces.MqService;
 import dk.sdu.mmmi.jobservice.service.model.Job;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,7 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testUpdateJob() throws Exception {
         long id = 2;
         Job job = TestObjects.createMockJob();
@@ -139,6 +141,97 @@ public class JobControllerIntegrationTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/companies/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testUpdateApplication() throws Exception {
+        long id = 1;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/jobs/application/{id}", id)
+                        .content(objectMapper.writeValueAsString(TestObjects.createMockApplicationDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testUpdateApplicationBadRequest() throws Exception {
+        long id = 2; //Id does not match the object
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/jobs/application/{id}", id)
+                        .content(objectMapper.writeValueAsString(TestObjects.createMockApplicationDTO()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void testGetApplicationsByUserId() throws Exception {
+        String id = "userid123";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/applications/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testGetApplicationsByUserIdNotExisting() throws Exception {
+        String id = "fakeuserid123";
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/applications/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+    }
+
+    @Test
+    public void testSearchJobs() throws Exception {
+        String search = "test";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+    }
+
+    @Test
+    public void testSearchJobsNoResults() throws Exception {
+        String search = "NoJobs";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
+                .andExpect(MockMvcResultMatchers.status().isNoContent()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
+    }
+
+    @Test
+    public void testFilterJobs() throws Exception {
+        double salary = 1000.00;
+        String location = "DK";
+        String jobType = "BACKEND";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&location={location}&jobType={jobType}", salary, location, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+    }
+
+    @Test
+    public void testFilterJobsMissingLocation() throws Exception {
+        double salary = 1000.00;
+        String jobType = "BACKEND";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+    }
+
+    @Test
+    public void testFilterJobsOnlySalary() throws Exception {
+        double salary = 1000.00;
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}", salary))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+    }
+
+    @Test
+    public void testFilterJobsMissingLocationFrontend() throws Exception {
+        double salary = 1000.00;
+        String jobType = "FRONTEND";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+    }
+
+    @Test
+    public void testFilterJobsEmptyString() throws Exception {
+        double salary = 1000.00;
+        String jobType = "";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
     }
 
 }

@@ -52,4 +52,10 @@ public class ApplicationServiceImplementation implements ApplicationService {
         }
         return new ArrayList<>(job.getApplications());
     }
+
+    @Override
+    public List<Application> getApplicationsByUserId(String userId) {
+        log.info("--> getApplicationsByUserId: {}", userId);
+        return databaseService.getApplicationsByUserId(userId);
+    }
 }

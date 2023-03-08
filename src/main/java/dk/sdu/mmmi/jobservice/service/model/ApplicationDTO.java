@@ -1,7 +1,5 @@
 package dk.sdu.mmmi.jobservice.service.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,5 +22,7 @@ public class ApplicationDTO {
     private Date updatedAt;
 
     private Long jobId;
+
+    private String application;
 
 }
