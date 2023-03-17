@@ -105,8 +105,9 @@ public class JobControllerIntegrationTest {
 
     @Test
     public void testGetAllJobs() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs?page=0&size=10"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(2)));
     }
 
     @Test

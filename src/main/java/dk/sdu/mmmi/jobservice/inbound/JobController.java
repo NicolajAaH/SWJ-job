@@ -7,6 +7,9 @@ import dk.sdu.mmmi.jobservice.service.model.ApplicationDTO;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,12 +47,15 @@ public class JobController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Job>> getJobs() {
-        log.info("--> getJobs");
-        List<Job> jobs = jobService.getJobs();
-        if (jobs == null || jobs.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Page<Job>> getJobs(@RequestParam Integer page, @RequestParam Integer size) {
+        log.info("--> getJobs page: {}, size: {}", page, size);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Job> jobs = jobService.getAllJobs(pageable);
+
+        if (!jobs.hasContent()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+
         return new ResponseEntity<>(jobs, HttpStatus.OK);
     }
 

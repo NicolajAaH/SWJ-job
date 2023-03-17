@@ -8,6 +8,8 @@ import dk.sdu.mmmi.jobservice.service.model.Job;
 import dk.sdu.mmmi.jobservice.service.model.JobType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -108,5 +110,10 @@ public class DatabaseServiceImpl implements DatabaseService {
         } else {
             return jobRepository.findAll();
         }
+    }
+
+    @Override
+    public Page<Job> getAllJobs(Pageable pageable) {
+        return jobRepository.findAll(pageable);
     }
 }
