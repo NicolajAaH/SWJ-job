@@ -99,15 +99,15 @@ public class JobServiceImplementation implements JobService {
     }
 
     @Override
-    public List<Job> searchJobs(String searchTerm) {
+    public Page<Job> searchJobs(String searchTerm, Pageable pageable) {
         log.info("--> searchJobs: {}", searchTerm);
-        return databaseService.searchJobs(searchTerm);
+        return databaseService.searchJobs(searchTerm, pageable);
     }
 
     @Override
-    public List<Job> filterJobs(Map<String, String> allRequestParams) {
+    public Page<Job> filterJobs(Map<String, String> allRequestParams, Pageable pageable) {
         log.info("--> filterJobs: {}", allRequestParams);
-        return databaseService.filterJobs(allRequestParams);
+        return databaseService.filterJobs(allRequestParams, pageable);
     }
 
     @Override

@@ -31,9 +31,9 @@ public interface DatabaseService {
 
     List<Application> getApplicationsByUserId(String userId);
 
-    List<Job> searchJobs(String searchTerm);
+    Page<Job> searchJobs(String searchTerm, Pageable pageable);
 
-    List<Job> filterJobs(Map<String, String> allRequestParams);
+    Page<Job> filterJobs(Map<String, String> allRequestParams, Pageable pageable);
 
     Page<Job> getAllJobs(Pageable pageable);
 }

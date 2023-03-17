@@ -2,6 +2,8 @@ package dk.sdu.mmmi.jobservice.outbound.repository;
 
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import dk.sdu.mmmi.jobservice.service.model.JobType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,19 +14,19 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     List<Job> findAllByCompanyId(Long id);
 
-    List<Job> findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String searchTerm, String searchTerm2);
+    Page<Job> findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String searchTerm, String searchTerm2, Pageable pageable);
 
-    List<Job> findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobType(Double salary, String location, JobType jobType);
+    Page<Job> findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobType(Double salary, String location, JobType jobType, Pageable pageable);
 
-    List<Job> findAllBySalaryGreaterThanAndLocationContainsIgnoreCase(Double salary, String location);
+    Page<Job> findAllBySalaryGreaterThanAndLocationContainsIgnoreCase(Double salary, String location, Pageable pageable);
 
-    List<Job> findAllBySalaryGreaterThanAndJobType(Double salary, JobType jobType);
+    Page<Job> findAllBySalaryGreaterThanAndJobType(Double salary, JobType jobType, Pageable pageable);
 
-    List<Job> findAllByLocationContainsIgnoreCaseAndJobType(String location, JobType jobType);
+    Page<Job> findAllByLocationContainsIgnoreCaseAndJobType(String location, JobType jobType, Pageable pageable);
 
-    List<Job> findAllBySalaryGreaterThan(Double salary);
+    Page<Job> findAllBySalaryGreaterThan(Double salary, Pageable pageable);
 
-    List<Job> findAllByLocationContainsIgnoreCase(String location);
+    Page<Job> findAllByLocationContainsIgnoreCase(String location, Pageable pageable);
 
-    List<Job> findAllByJobType(JobType jobType);
+    Page<Job> findAllByJobType(JobType jobType, Pageable pageable);
 }
