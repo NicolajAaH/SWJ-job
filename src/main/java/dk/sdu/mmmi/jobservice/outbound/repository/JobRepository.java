@@ -14,19 +14,21 @@ public interface JobRepository extends JpaRepository<Job, Long> {
 
     List<Job> findAllByCompanyId(Long id);
 
-    Page<Job> findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String searchTerm, String searchTerm2, Pageable pageable);
+    Page<Job> findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByExpiresAtDesc(String searchTerm, String searchTerm2, Pageable pageable);
 
-    Page<Job> findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobType(Double salary, String location, JobType jobType, Pageable pageable);
+    Page<Job> findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(Double salary, String location, JobType jobType, Pageable pageable);
 
-    Page<Job> findAllBySalaryGreaterThanAndLocationContainsIgnoreCase(Double salary, String location, Pageable pageable);
+    Page<Job> findAllBySalaryGreaterThanAndLocationContainsIgnoreCaseOrderByExpiresAtDesc(Double salary, String location, Pageable pageable);
 
-    Page<Job> findAllBySalaryGreaterThanAndJobType(Double salary, JobType jobType, Pageable pageable);
+    Page<Job> findAllBySalaryGreaterThanAndJobTypeOrderByExpiresAtDesc(Double salary, JobType jobType, Pageable pageable);
 
-    Page<Job> findAllByLocationContainsIgnoreCaseAndJobType(String location, JobType jobType, Pageable pageable);
+    Page<Job> findAllByLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(String location, JobType jobType, Pageable pageable);
 
-    Page<Job> findAllBySalaryGreaterThan(Double salary, Pageable pageable);
+    Page<Job> findAllBySalaryGreaterThanOrderByExpiresAtDesc(Double salary, Pageable pageable);
 
-    Page<Job> findAllByLocationContainsIgnoreCase(String location, Pageable pageable);
+    Page<Job> findAllByLocationContainsIgnoreCaseOrderByExpiresAtDesc(String location, Pageable pageable);
 
-    Page<Job> findAllByJobType(JobType jobType, Pageable pageable);
+    Page<Job> findAllByJobTypeOrderByExpiresAtDesc(JobType jobType, Pageable pageable);
+
+    Page<Job> findAllByOrderByExpiresAtDesc(Pageable pageable);
 }

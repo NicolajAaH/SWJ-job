@@ -86,7 +86,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public Page<Job> searchJobs(String searchTerm, Pageable pageable) {
         //Calling with same parameter twice to search both title and description
-        return jobRepository.findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(searchTerm, searchTerm, pageable);
+        return jobRepository.findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByExpiresAtDesc(searchTerm, searchTerm, pageable);
     }
 
     @Override
@@ -94,19 +94,19 @@ public class DatabaseServiceImpl implements DatabaseService {
         allRequestParams.values().removeIf(String::isEmpty);
         if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("location") && allRequestParams.containsKey("jobType")) {
             JobType jobType = JobType.valueOf(allRequestParams.get("jobType"));
-            return jobRepository.findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobType(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), jobType, pageable);
+            return jobRepository.findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), jobType, pageable);
         } else if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("location")) {
-            return jobRepository.findAllBySalaryGreaterThanAndLocationContainsIgnoreCase(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), pageable);
+            return jobRepository.findAllBySalaryGreaterThanAndLocationContainsIgnoreCaseOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), pageable);
         } else if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("jobType")) {
-            return jobRepository.findAllBySalaryGreaterThanAndJobType(Double.parseDouble(allRequestParams.get("salary")), JobType.valueOf(allRequestParams.get("jobType")), pageable);
+            return jobRepository.findAllBySalaryGreaterThanAndJobTypeOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), JobType.valueOf(allRequestParams.get("jobType")), pageable);
         } else if (allRequestParams.containsKey("location") && allRequestParams.containsKey("jobType")) {
-            return jobRepository.findAllByLocationContainsIgnoreCaseAndJobType(allRequestParams.get("location"), JobType.valueOf(allRequestParams.get("jobType")), pageable);
+            return jobRepository.findAllByLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(allRequestParams.get("location"), JobType.valueOf(allRequestParams.get("jobType")), pageable);
         } else if (allRequestParams.containsKey("salary")) {
-            return jobRepository.findAllBySalaryGreaterThan(Double.parseDouble(allRequestParams.get("salary")), pageable);
+            return jobRepository.findAllBySalaryGreaterThanOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), pageable);
         } else if (allRequestParams.containsKey("location")) {
-            return jobRepository.findAllByLocationContainsIgnoreCase(allRequestParams.get("location"), pageable);
+            return jobRepository.findAllByLocationContainsIgnoreCaseOrderByExpiresAtDesc(allRequestParams.get("location"), pageable);
         } else if (allRequestParams.containsKey("jobType")) {
-            return jobRepository.findAllByJobType(JobType.valueOf(allRequestParams.get("jobType")), pageable);
+            return jobRepository.findAllByJobTypeOrderByExpiresAtDesc(JobType.valueOf(allRequestParams.get("jobType")), pageable);
         } else {
             return jobRepository.findAll(pageable);
         }
@@ -114,6 +114,6 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public Page<Job> getAllJobs(Pageable pageable) {
-        return jobRepository.findAll(pageable);
+        return jobRepository.findAllByOrderByExpiresAtDesc(pageable);
     }
 }
