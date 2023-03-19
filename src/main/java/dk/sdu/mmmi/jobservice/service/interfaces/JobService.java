@@ -2,6 +2,8 @@ package dk.sdu.mmmi.jobservice.service.interfaces;
 
 import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.Job;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,9 @@ public interface JobService {
 
     Application getApplication(long id);
 
-    List<Job> searchJobs(String searchTerm);
+    Page<Job> searchJobs(String searchTerm, Pageable pageable);
 
-    List<Job> filterJobs(Map<String, String> allRequestParams);
+    Page<Job> filterJobs(Map<String, String> allRequestParams, Pageable pageable);
+
+    Page<Job> getAllJobs(Pageable pageable);
 }

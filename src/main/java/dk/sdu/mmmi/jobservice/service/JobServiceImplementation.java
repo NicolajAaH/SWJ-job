@@ -5,6 +5,8 @@ import dk.sdu.mmmi.jobservice.service.model.Application;
 import dk.sdu.mmmi.jobservice.service.model.Job;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -97,14 +99,20 @@ public class JobServiceImplementation implements JobService {
     }
 
     @Override
-    public List<Job> searchJobs(String searchTerm) {
+    public Page<Job> searchJobs(String searchTerm, Pageable pageable) {
         log.info("--> searchJobs: {}", searchTerm);
-        return databaseService.searchJobs(searchTerm);
+        return databaseService.searchJobs(searchTerm, pageable);
     }
 
     @Override
-    public List<Job> filterJobs(Map<String, String> allRequestParams) {
+    public Page<Job> filterJobs(Map<String, String> allRequestParams, Pageable pageable) {
         log.info("--> filterJobs: {}", allRequestParams);
-        return databaseService.filterJobs(allRequestParams);
+        return databaseService.filterJobs(allRequestParams, pageable);
+    }
+
+    @Override
+    public Page<Job> getAllJobs(Pageable pageable) {
+        log.info("--> getAllJobs: {}", pageable);
+        return databaseService.getAllJobs(pageable);
     }
 }

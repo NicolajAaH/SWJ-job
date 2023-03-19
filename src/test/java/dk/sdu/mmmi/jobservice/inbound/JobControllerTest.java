@@ -11,6 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -152,10 +155,10 @@ class JobControllerTest {
         List<Job> mockJobs = new ArrayList<>();
         mockJobs.add(mockJob);
 
-        when(jobService.getJobs()).thenReturn(mockJobs);
+        when(jobService.getAllJobs(any())).thenReturn(new PageImpl<>(mockJobs));
 
-        ResponseEntity<List<Job>> response = jobController.getJobs();
-        List<Job> jobs = response.getBody();
+        ResponseEntity<Page<Job>> response = jobController.getJobs(10, 10);
+        List<Job> jobs = response.getBody().getContent();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(jobs).isNotNull();
@@ -170,7 +173,7 @@ class JobControllerTest {
         assertThat(jobs.get(0).getUpdatedAt()).isNotNull();
         assertThat(jobs.get(0).getExpiresAt()).isNotNull();
 
-        verify(jobService, times(1)).getJobs();
+        verify(jobService, times(1)).getAllJobs(any());
         verifyNoMoreInteractions(jobService);
     }
 

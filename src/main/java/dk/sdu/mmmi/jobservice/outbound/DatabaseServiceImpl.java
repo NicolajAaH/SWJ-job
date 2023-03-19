@@ -8,6 +8,8 @@ import dk.sdu.mmmi.jobservice.service.model.Job;
 import dk.sdu.mmmi.jobservice.service.model.JobType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -82,31 +84,36 @@ public class DatabaseServiceImpl implements DatabaseService {
     }
 
     @Override
-    public List<Job> searchJobs(String searchTerm) {
+    public Page<Job> searchJobs(String searchTerm, Pageable pageable) {
         //Calling with same parameter twice to search both title and description
-        return jobRepository.findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(searchTerm, searchTerm);
+        return jobRepository.findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCaseOrderByExpiresAtDesc(searchTerm, searchTerm, pageable);
     }
 
     @Override
-    public List<Job> filterJobs(Map<String, String> allRequestParams) {
+    public Page<Job> filterJobs(Map<String, String> allRequestParams, Pageable pageable) {
         allRequestParams.values().removeIf(String::isEmpty);
         if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("location") && allRequestParams.containsKey("jobType")) {
             JobType jobType = JobType.valueOf(allRequestParams.get("jobType"));
-            return jobRepository.findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobType(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), jobType);
+            return jobRepository.findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), jobType, pageable);
         } else if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("location")) {
-            return jobRepository.findAllBySalaryGreaterThanAndLocationContainsIgnoreCase(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"));
+            return jobRepository.findAllBySalaryGreaterThanAndLocationContainsIgnoreCaseOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), pageable);
         } else if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("jobType")) {
-            return jobRepository.findAllBySalaryGreaterThanAndJobType(Double.parseDouble(allRequestParams.get("salary")), JobType.valueOf(allRequestParams.get("jobType")));
+            return jobRepository.findAllBySalaryGreaterThanAndJobTypeOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), JobType.valueOf(allRequestParams.get("jobType")), pageable);
         } else if (allRequestParams.containsKey("location") && allRequestParams.containsKey("jobType")) {
-            return jobRepository.findAllByLocationContainsIgnoreCaseAndJobType(allRequestParams.get("location"), JobType.valueOf(allRequestParams.get("jobType")));
+            return jobRepository.findAllByLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(allRequestParams.get("location"), JobType.valueOf(allRequestParams.get("jobType")), pageable);
         } else if (allRequestParams.containsKey("salary")) {
-            return jobRepository.findAllBySalaryGreaterThan(Double.parseDouble(allRequestParams.get("salary")));
+            return jobRepository.findAllBySalaryGreaterThanOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), pageable);
         } else if (allRequestParams.containsKey("location")) {
-            return jobRepository.findAllByLocationContainsIgnoreCase(allRequestParams.get("location"));
+            return jobRepository.findAllByLocationContainsIgnoreCaseOrderByExpiresAtDesc(allRequestParams.get("location"), pageable);
         } else if (allRequestParams.containsKey("jobType")) {
-            return jobRepository.findAllByJobType(JobType.valueOf(allRequestParams.get("jobType")));
+            return jobRepository.findAllByJobTypeOrderByExpiresAtDesc(JobType.valueOf(allRequestParams.get("jobType")), pageable);
         } else {
-            return jobRepository.findAll();
+            return jobRepository.findAll(pageable);
         }
+    }
+
+    @Override
+    public Page<Job> getAllJobs(Pageable pageable) {
+        return jobRepository.findAllByOrderByExpiresAtDesc(pageable);
     }
 }

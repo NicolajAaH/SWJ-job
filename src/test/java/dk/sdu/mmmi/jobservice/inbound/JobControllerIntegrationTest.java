@@ -2,6 +2,7 @@ package dk.sdu.mmmi.jobservice.inbound;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dk.sdu.mmmi.jobservice.TestObjects;
+import dk.sdu.mmmi.jobservice.outbound.repository.JobRepository;
 import dk.sdu.mmmi.jobservice.service.application.JobserviceApplication;
 import dk.sdu.mmmi.jobservice.service.interfaces.MqService;
 import dk.sdu.mmmi.jobservice.service.model.Job;
@@ -12,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,8 +24,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = JobserviceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -36,6 +44,8 @@ public class JobControllerIntegrationTest {
 
 
     private ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private JobRepository jobRepository;
 
     @Test
     public void testCreateJob() throws Exception {
@@ -105,8 +115,9 @@ public class JobControllerIntegrationTest {
 
     @Test
     public void testGetAllJobs() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs?page=0&size=10"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(2)));
     }
 
     @Test
@@ -183,15 +194,22 @@ public class JobControllerIntegrationTest {
     @Test
     public void testSearchJobs() throws Exception {
         String search = "test";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/" + search + "?page=0&size=10"))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(2)));
+    }
+
+    @Test
+    public void testSearchJobsLowSize() throws Exception {
+        String search = "test";
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/" + search + "?page=0&size=1"))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(1)));
     }
 
     @Test
     public void testSearchJobsNoResults() throws Exception {
         String search = "NoJobs";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}", search))
-                .andExpect(MockMvcResultMatchers.status().isNoContent()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/search/{search}?page=0&size=1", search))
+                .andExpect(MockMvcResultMatchers.status().isNoContent()).andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
     @Test
@@ -199,39 +217,39 @@ public class JobControllerIntegrationTest {
         double salary = 1000.00;
         String location = "DK";
         String jobType = "BACKEND";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&location={location}&jobType={jobType}", salary, location, jobType))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&location={location}&jobType={jobType}&page=0&size=10", salary, location, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(1)));
     }
 
     @Test
     public void testFilterJobsMissingLocation() throws Exception {
         double salary = 1000.00;
         String jobType = "BACKEND";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}&page=0&size=10", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(1)));
     }
 
     @Test
     public void testFilterJobsOnlySalary() throws Exception {
         double salary = 1000.00;
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}", salary))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&page=0&size=10", salary))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(2)));
     }
 
     @Test
     public void testFilterJobsMissingLocationFrontend() throws Exception {
         double salary = 1000.00;
         String jobType = "FRONTEND";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}&page=0&size=10", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(1)));
     }
 
     @Test
     public void testFilterJobsEmptyString() throws Exception {
         double salary = 1000.00;
         String jobType = "";
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}", salary, jobType))
-                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/jobs/filter?salary={salary}&jobType={jobType}&page=0&size=10", salary, jobType))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.content", Matchers.hasSize(2)));
     }
 
 }
