@@ -144,6 +144,7 @@ class JobControllerTest {
     void applyForJob() {
         ApplicationDTO mockJobApplication = TestObjects.createMockApplicationDTO();
         doNothing().when(jobService).applyForJob(anyLong(), any(Application.class));
+        when(jobService.getJob(anyLong())).thenReturn(TestObjects.createMockJob());
 
         ResponseEntity<Void> response = jobController.applyForJob(1L, mockJobApplication);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);

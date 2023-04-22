@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,9 @@ public class JobController {
         log.info("--> applyForJob: {}, id: {}", applicationDTO, id);
         Application application = dtoMapper.applicationDTOToApplication(applicationDTO);
         application.setJob(jobService.getJob(applicationDTO.getJobId()));
+        if (application.getJob().getExpiresAt().before(new Date())){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         jobService.applyForJob(id, application);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

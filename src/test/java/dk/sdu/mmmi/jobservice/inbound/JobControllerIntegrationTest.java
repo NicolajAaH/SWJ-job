@@ -41,6 +41,7 @@ public class JobControllerIntegrationTest {
     private JobRepository jobRepository;
 
     @Test
+    @DirtiesContext
     public void testCreateJob() throws Exception {
         Job job = TestObjects.createMockJob();
 
@@ -54,8 +55,6 @@ public class JobControllerIntegrationTest {
 
     @Test
     public void testCreateJobNoBody() throws Exception {
-        Job job = TestObjects.createMockJob();
-
         doNothing().when(mqService).sendMessage(anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/jobs"))
@@ -85,7 +84,6 @@ public class JobControllerIntegrationTest {
     @Test
     public void testUpdateJobNoBody() throws Exception {
         long id = 2;
-        Job job = TestObjects.createMockJob();
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/jobs/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());
@@ -114,6 +112,7 @@ public class JobControllerIntegrationTest {
     }
 
     @Test
+    @DirtiesContext
     public void testApplyForJob() throws Exception {
         long id = 1;
 
