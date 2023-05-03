@@ -41,7 +41,6 @@ public class JobServiceImplementation implements JobService {
     @Override
     public Job updateJob(long id, Job job) {
         log.info("--> updateJob: {}", job);
-        job.setUpdatedAt(new Date());
         if(job.getCompanyId() != null){
             log.warn("Attempt to change company id of job with id {}", id);
             job.setCompanyId(null);
