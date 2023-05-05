@@ -2,6 +2,9 @@ package dk.sdu.mmmi.jobservice;
 
 import dk.sdu.mmmi.jobservice.service.model.*;
 
+import java.time.Instant;
+import java.util.Date;
+
 public class TestObjects {
 
     public static Job createMockJob(){
@@ -14,7 +17,9 @@ public class TestObjects {
         job.setCreatedAt(new java.util.Date());
         job.setCompanyId(1L);
         job.setId(1L);
-        job.setExpiresAt(new java.util.Date());
+        Date date = new Date();
+        Instant instant = date.toInstant().plusSeconds(86400); // 1 day
+        job.setExpiresAt(Date.from(instant));
         job.setUpdatedAt(new java.util.Date());
         return job;
     }
