@@ -51,99 +51,38 @@ spec:
             - containerPort: 8080
           env:
             - name: SPRING_DATASOURCE_USERNAME
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: databasesecrets
+                  key: username
             - name: SPRING_DATASOURCE_PASSWORD
-              value: password
+              valueFrom:
+                secretKeyRef:
+                  name: databasesecrets
+                  key: password
             - name: SPRING_DATASOURCE_URL
-              value: jdbc:postgresql://database-job-service:5432/postgres
+              valueFrom:
+                secretKeyRef:
+                  name: databasesecrets
+                  key: connection-string-job-service
             - name: POSTGRES_DB
-              value: postgres
+              value: database-job-service
             - name: POSTGRES_HOST
               value: postgres
             - name: SPRING_JMS_SERVICEBUS_CONNECTION-STRING
               valueFrom:
                 secretKeyRef:
-                  name: jobservicesecret
+                  name: mqsecret
                   key: connection-string
             - name: SPRING_JMS_SERVICEBUS_PRICING-TIER
               value: standard
           resources:
             limits:  
-              cpu: "500m"
+              cpu: "250m"
               memory: "500Mi"
             requests:  
-              cpu: "500m"
+              cpu: "250m"
               memory: "500Mi"
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: database-job-service
-spec:
-  serviceName: database-job-service
-  replicas: 1
-  selector:
-    matchLabels:
-      app: database-job-service
-  template:
-    metadata:
-      labels:
-        app: database-job-service
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-        - name: postgres
-          image: postgres:latest
-          volumeMounts:
-            - name: postgresql-initdb-job
-              mountPath: /docker-entrypoint-initdb.d
-            - name: postgres-persistent-storage-job
-              mountPath: /data
-          env:
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: password
-            - name: POSTGRES_DB
-              value: postgres
-            - name: PGDATA
-              value: /data/pgdata
-          ports:
-            - containerPort: 5432
-          resources:
-            limits:  
-              cpu: "500m"
-              memory: "500Mi"
-            requests:  
-              cpu: "500m"
-              memory: "500Mi"
-      volumes:
-        - name: postgresql-initdb-job
-          configMap:
-            name: postgresql-initdb-config-job
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-persistent-storage-job
-      annotations:
-        volume.beta.kubernetes.io/storage-class: "standard"
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 500Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: database-job-service
-spec:
-  selector:
-    app: database-job-service
-  ports:
-    - name: http
-      port: 5432
-      targetPort: 5432
-  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
