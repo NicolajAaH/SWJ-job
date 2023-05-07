@@ -26,6 +26,19 @@ paths:
     get:
       summary: "GET api/jobs"
       operationId: "getJobs"
+      parameters:
+        - name: "page"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+            format: "int32"
+        - name: "size"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+            format: "int32"
       responses:
         "200":
           description: "OK"
@@ -151,6 +164,105 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ResponseEntity"
+  /api/jobs/application/{id}:
+    put:
+      summary: "PUT api/jobs/application/{id}"
+      operationId: "updateApplication"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+            format: "int64"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
+  /api/jobs/applications/{userId}:
+    get:
+      summary: "GET api/jobs/applications/{userId}"
+      operationId: "getApplicationsByUserId"
+      parameters:
+        - name: "userId"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
+  /api/jobs/search/{searchTerm}:
+    get:
+      summary: "GET api/jobs/search/{searchTerm}"
+      operationId: "searchJobs"
+      parameters:
+        - name: "searchTerm"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "page"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+            format: "int32"
+        - name: "size"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+            format: "int32"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
+  /api/jobs/filter:
+    get:
+      summary: "GET api/jobs/filter"
+      operationId: "filterJobs"
+      parameters:
+        - name: "allRequestParams"
+          in: "query"
+          required: true
+          schema:
+            type: "object"
+        - name: "page"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+            format: "int32"
+        - name: "size"
+          in: "query"
+          required: true
+          schema:
+            type: "integer"
+            format: "int32"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ResponseEntity"
 components:
   schemas:
     Application:
@@ -175,6 +287,8 @@ components:
           format: "date-time"
         job:
           $ref: "#/components/schemas/Job"
+        application:
+          type: "string"
     Job:
       type: "object"
       properties:
@@ -248,3 +362,5 @@ components:
         jobId:
           type: "integer"
           format: "int64"
+        application:
+          type: "string"
