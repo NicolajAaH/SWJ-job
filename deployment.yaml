@@ -25,6 +25,7 @@ data:
         status      VARCHAR(10)    NOT NULL,
         job_id      INTEGER        NOT NULL REFERENCES jobs (id),
         user_id     VARCHAR(50)    NOT NULL,
+        application_text VARCHAR(255)   NOT NULL,
         created_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
         updated_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
         UNIQUE (job_id, user_id)
@@ -96,3 +97,28 @@ spec:
       port: 8080
       targetPort: 8080
   type: ClusterIP
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-job
+spec:
+  maxReplicas: 3
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: job-service
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

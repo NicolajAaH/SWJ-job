@@ -18,7 +18,7 @@ CREATE TABLE applications
     status      VARCHAR(10)    NOT NULL,
     job_id      INTEGER        NOT NULL REFERENCES jobs (id),
     user_id     VARCHAR(50)    NOT NULL,
-    application VARCHAR(255)   NOT NULL,
+    application_text VARCHAR(255)   NOT NULL,
     created_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP      NOT NULL DEFAULT NOW(),
     UNIQUE (job_id, user_id)

@@ -91,7 +91,7 @@ public class DatabaseServiceImpl implements DatabaseService {
 
     @Override
     public Page<Job> filterJobs(Map<String, String> allRequestParams, Pageable pageable) {
-        allRequestParams.values().removeIf(String::isEmpty);
+        allRequestParams.values().removeIf(String::isEmpty); //Remove empty values from map
         if (allRequestParams.containsKey("salary") && allRequestParams.containsKey("location") && allRequestParams.containsKey("jobType")) {
             JobType jobType = JobType.valueOf(allRequestParams.get("jobType"));
             return jobRepository.findBySalaryGreaterThanAndLocationContainsIgnoreCaseAndJobTypeOrderByExpiresAtDesc(Double.parseDouble(allRequestParams.get("salary")), allRequestParams.get("location"), jobType, pageable);

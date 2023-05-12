@@ -21,7 +21,7 @@ public class MQController implements MqService {
 
     @Override
     public void sendMessage(Object object) {
-        if(!jmsTemplate.isPubSubDomain())
+        if(!jmsTemplate.isPubSubDomain()) // If not set to pub/sub, set it as it is a topic
             jmsTemplate.setPubSubDomain(true);
         jmsTemplate.convertAndSend(topic, gson.toJson(object));
     }
