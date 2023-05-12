@@ -28,7 +28,7 @@ public class JobServiceImplementation implements JobService {
         log.info("--> createJob: {}", job);
         job.setCreatedAt(new Date());
         Job createdJob = databaseService.createJob(job);
-        mqService.sendMessage(createdJob);
+        mqService.sendMessage(createdJob); // Send message to Azure Service Bus
         return createdJob;
     }
 
@@ -41,7 +41,7 @@ public class JobServiceImplementation implements JobService {
     @Override
     public Job updateJob(long id, Job job) {
         log.info("--> updateJob: {}", job);
-        if(job.getCompanyId() != null){
+        if (job.getCompanyId() != null) { // Prevent changing company id
             log.warn("Attempt to change company id of job with id {}", id);
             job.setCompanyId(null);
         }
