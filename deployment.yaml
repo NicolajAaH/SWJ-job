@@ -108,7 +108,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: job-service
+    name: job-service-deployment
   metrics:
   - type: Resource
     resource:
